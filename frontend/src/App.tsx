@@ -24,13 +24,15 @@ const App = () => {
       <h1>Todos</h1>
       <NewTodo />
       <div>
-        {data.map((todo: Todo) => (
-          <StyledTodo key={`${todo.id}-${todo.text}`}>
-            <p>{todo.id}</p>
-            <p>{todo.text}</p>
-            <Checkbox checked={todo.completed} />
-          </StyledTodo>
-        ))}
+        {data.map((todo: Todo) => {
+          return (
+            <StyledTodo key={`${todo.id}-${todo.text}`}>
+              <p>{todo.id}</p>
+              <p>{todo.text}</p>
+              <Checkbox checked={todo.completed} />
+            </StyledTodo>
+          );
+        })}
       </div>
     </div>
   );
@@ -39,21 +41,18 @@ const App = () => {
 export default App;
 
 const getTodos = async () => {
-  const url = `${import.meta.env.VITE_API_URL}/todos`; // Ensure correct URL construction
-  console.log(url); // Log the constructed URL for verification
+  const url = `${import.meta.env.VITE_API_URL}/todos`;
 
   const res = await fetch(url);
 
   if (!res.ok) {
-    // Check for successful response (status code 200-299)
     throw new Error(`API request failed with status ${res.status}`);
   }
 
-  // Since bodyUsed is true, we can't use res.json() directly
-  const textData = await res.text(); // Read the response body as text
+  const textData = await res.text();
 
   try {
-    const data = JSON.parse(textData); // Attempt to parse the text as JSON
+    const data = JSON.parse(textData);
     return data;
   } catch (error) {
     throw new Error('Failed to parse response as JSON');
