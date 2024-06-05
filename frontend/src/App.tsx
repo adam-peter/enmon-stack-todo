@@ -1,20 +1,14 @@
 import { useQuery } from '@tanstack/react-query';
 import { Checkbox } from 'antd';
 import { Todo } from './types';
-import styled from 'styled-components';
-
-const StyledTodo = styled.div`
-  display: flex;
-  gap: 1rem;
-`
+import { StyledTodo } from './components/styled/Todo';
+import NewTodo from './components/NewTodo';
 
 const App = () => {
   const { data, isLoading, error } = useQuery({
     queryKey: ['todos'],
     queryFn: () => getTodos(),
   });
-
-  console.log(data);
 
   if (isLoading) return <div>...loading</div>;
 
@@ -28,9 +22,10 @@ const App = () => {
   return (
     <div>
       <h1>Todos</h1>
+      <NewTodo />
       <div>
         {data.map((todo: Todo) => (
-          <StyledTodo>
+          <StyledTodo key={`${todo.id}-${todo.text}`}>
             <p>{todo.id}</p>
             <p>{todo.text}</p>
             <Checkbox checked={todo.completed} />
