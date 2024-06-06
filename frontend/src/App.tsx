@@ -1,7 +1,6 @@
 import { useQuery } from '@tanstack/react-query';
-import { Checkbox } from 'antd';
-import { Todo } from './types';
-import { StyledTodo } from './components/styled/Todo';
+import { TodoType } from './types';
+import { Todo } from './components/Todo';
 import NewTodo from './components/NewTodo';
 
 const App = () => {
@@ -21,17 +20,10 @@ const App = () => {
 
   return (
     <div>
-      <h1>Todos</h1>
       <NewTodo />
       <div>
-        {data.map((todo: Todo) => {
-          return (
-            <StyledTodo key={`${todo.id}-${todo.text}`}>
-              <p>{todo.id}</p>
-              <p>{todo.text}</p>
-              <Checkbox checked={todo.completed} />
-            </StyledTodo>
-          );
+        {data.map((todo: TodoType) => {
+          return <Todo todo={todo} key={todo._id} />;
         })}
       </div>
     </div>

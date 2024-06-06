@@ -1,6 +1,6 @@
-export type Todo = {
+export type TodoType = {
   __v: number
-  id: string,
+  _id: string,
   text: string,
   completed: boolean,
 }
