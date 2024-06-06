@@ -3,7 +3,7 @@ import { TodoType } from '../types';
 import { Button, Checkbox, Input } from 'antd';
 import { useState } from 'react';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
-import { EditOutlined } from '@ant-design/icons';
+import { DeleteOutlined, EditOutlined } from '@ant-design/icons';
 
 export const StyledTodo = styled.div<{ $completed: boolean }>`
   display: flex;
@@ -18,7 +18,7 @@ export const Todo = ({ todo }: { todo: TodoType }) => {
   const [isEditing, setIsEditing] = useState(false);
   const [text, setText] = useState(todo.text);
 
-  const { mutate } = useMutation({
+  const updateMutation = useMutation({
     mutationFn: async (updatedTodo: Partial<TodoType>) => {
       const res = await fetch(
         `${import.meta.env.VITE_API_URL}/todos/${todo._id}`,
@@ -42,9 +42,22 @@ export const Todo = ({ todo }: { todo: TodoType }) => {
     },
   });
 
+  const deleteMutation = useMutation({
+    mutationFn: async () => {
+      fetch(`${import.meta.env.VITE_API_URL}/todos/${todo._id}`, {
+        method: 'DELETE',
+      });
+    },
+    onSuccess: () => {
+      queryClient.setQueryData((oldData: TodoType[]) => oldData.map(t => (
+        t._id === todo._id ? 
+      )))
+    }
+  });
+
   const handleComplete = () => {
     setIsCompleted((prev) => !prev);
-    mutate({ completed: !isCompleted });
+    updateMutation.mutate({ completed: !isCompleted });
   };
 
   return (
@@ -57,7 +70,7 @@ export const Todo = ({ todo }: { todo: TodoType }) => {
           onChange={(e) => setText(e.target.value)}
           onKeyDown={(e) => {
             if (e.key === 'Enter' && text.trim() !== '') {
-              mutate({ text });
+              updateMutation.mutate({ text });
               setIsEditing(false);
             }
           }}
@@ -71,6 +84,11 @@ export const Todo = ({ todo }: { todo: TodoType }) => {
         onClick={() => {
           setIsEditing((prev) => !prev);
         }}
+      />
+      <Button
+        icon={<DeleteOutlined />}
+        type="text"
+        onClick={() => deleteMutation.mutate()}
       />
     </StyledTodo>
   );
